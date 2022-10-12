@@ -29,7 +29,8 @@ if(!(Test-Path $ilrNupkg -PathType Leaf))
 	
 # Unzip ILRepack
 [System.Console]::WriteLine("Extracting files from $ilrNupkg...")
-Expand-Archive -Path $ilrNupkg -Destination $ilrDirectory -Force
+Install-Package -Name $ILRepack -Source $ilrNupkg -Destination $ilrDirectory
+#Expand-Archive -Path $ilrNupkg -Destination $ilrDirectory -Force
 	
 # Make sure ILRepack was unzipped
 $ilrExe= "$ilrDirectory\tools\$ILRepack.exe"
