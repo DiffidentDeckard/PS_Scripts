@@ -41,7 +41,6 @@ if(!(Test-Path $ilrExe -PathType Leaf))
 
 # Run ILRepack to merge all the output .dll and .pdb files
 [System.Console]::WriteLine("Running ILRepack...")
-& $ilrExe -wildcards "$ArtifactStagingDirectory\SotM_ModBase.dll" "$ArtifactStagingDirectory\*.dll"
 $mergedDll = "$ArtifactStagingDirectory\merged\SotM_ModBase.dll"
 & $ilrExe -wildcards -out:$mergedDll "$ArtifactStagingDirectory\SotM_ModBase.dll" "$ArtifactStagingDirectory\EngineCommon.dll" "$ArtifactStagingDirectory\SentinelsEngine.dll" "$ArtifactStagingDirectory\nunit.framework.dll"
 	
