@@ -50,6 +50,3 @@ if(!(Test-Path $mergedDll -PathType Leaf))
 [System.Console]::WriteLine("Successfully ran ILRepack")
 
 ### TESTING REGION
-   echo $(build.buildid)
-   
-   echo $(build.buildnumber)
