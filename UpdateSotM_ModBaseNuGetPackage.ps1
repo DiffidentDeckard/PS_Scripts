@@ -15,7 +15,7 @@ $SentinelsEngine = "SentinelsEngine"
 
 # Download ILRepack through a web client
 $ilrDirectory = "$DownloadsDirectory\$ILRepack"
-$ilrNupkg = "$ilrDirectory.zip"
+$ilrNupkg = "$ilrDirectory.zip" # Using .zip instead of .nupkg because Expand-Archive doesn't work with .nupkg
 [System.Console]::WriteLine("Downloading $SteamCmd...")
 $webClient = New-Object System.Net.WebClient
 $webClient.DownloadFile($IlrDownloadUrl, $ilrNupkg)
@@ -41,5 +41,13 @@ if(!(Test-Path $ilrExe -PathType Leaf))
 
 # Run ILRepack to merge all the output .dll and .pdb files
 [System.Console]::WriteLine("Running ILRepack...")
-
+& $ilrExe -wildcards "$ArtifactStagingDirectory\SotM_ModBase.dll" "$ArtifactStagingDirectory\*.dll"
+$mergedDll = "$ArtifactStagingDirectory\merged\SotM_ModBase.dll"
+& $ilrExe -wildcards -out:$mergedDll "$ArtifactStagingDirectory\SotM_ModBase.dll" "$ArtifactStagingDirectory\EngineCommon.dll" "$ArtifactStagingDirectory\SentinelsEngine.dll" "$ArtifactStagingDirectory\nunit.framework.dll"
+	
+# Make sure DLLs were merged
+if(!(Test-Path $mergedDll -PathType Leaf))
+{
+	throw [System.IO.FileNotFoundException] "$mergedDll"
+}
 [System.Console]::WriteLine("Successfully ran ILRepack")
