@@ -6,8 +6,6 @@ $ArtifactStagingDirectory = $args[0]
 $DownloadsDirectory = (New-Object -ComObject Shell.Application).NameSpace('shell:Downloads').Self.Path
 $IlrDownloadUrl = "http://nuget.org/api/v2/package/ILRepack"
 $ILRepack = "ILRepack"
-$EngineCommon = "EngineCommon"
-$SentinelsEngine = "SentinelsEngine"
 
 [System.Console]::WriteLine("Artifact Staging Directory: $ArtifactStagingDirectory")
 [System.Console]::WriteLine("Downloads directory: $DownloadsDirectory")
@@ -50,3 +48,8 @@ if(!(Test-Path $mergedDll -PathType Leaf))
 	throw [System.IO.FileNotFoundException] "$mergedDll"
 }
 [System.Console]::WriteLine("Successfully ran ILRepack")
+
+### TESTING REGION
+   echo $(build.buildid)
+   
+   echo $(build.buildnumber)
