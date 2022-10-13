@@ -54,16 +54,16 @@ if(!(Test-Path $mergedDll -PathType Leaf))
 [System.Console]::WriteLine("Successfully ran ILRepack")
 
 # Get the versions of all of our DLLs
-$SotM_ModBaseVer = $SotM_ModBaseDll.VersionInfo.FileVersionRaw
+$SotM_ModBaseVer = (Get-Item $SotM_ModBaseDll).VersionInfo.FileVersionRaw
 [System.Console]::WriteLine("SotM_ModBaseDll version: $SotM_ModBaseVer")
 
-$EngineCommonVer = $EngineCommonDll.VersionInfo.FileVersionRaw
+$EngineCommonVer = (Get-Item $EngineCommonDll).VersionInfo.FileVersionRaw
 [System.Console]::WriteLine("EngineCommonDll version: $EngineCommonVer")
 
-$SentinelsEngineVer = $SentinelsEngineDll.VersionInfo.FileVersionRaw
+$SentinelsEngineVer = (Get-Item $SentinelsEngineDll).VersionInfo.FileVersionRaw
 [System.Console]::WriteLine("SentinelsEngineDll version: $SentinelsEngineVer")
 
-$NunitFrameworkVer = $NunitFrameworkDll.VersionInfo.FileVersionRaw
+$NunitFrameworkVer = (Get-Item $NunitFrameworkDll).VersionInfo.FileVersionRaw
 [System.Console]::WriteLine("NunitFrameworkDll version: $NunitFrameworkVer")
 
 # Create json to store all the versions of our dependencies, for us to check next time
@@ -77,7 +77,7 @@ $json = @"
 "@
 
 # Write string to file
-$json | ConvertTo-Json -depth 100 | Out-File "$ArtifactStagingDirectory\version.json"
-[System.Console]::WriteLine("version.json file written")
+$json | ConvertTo-Json -depth 100 | Out-File "$ArtifactStagingDirectory\versions.json"
+[System.Console]::WriteLine("versions.json file written")
 
 ### TESTING REGION
