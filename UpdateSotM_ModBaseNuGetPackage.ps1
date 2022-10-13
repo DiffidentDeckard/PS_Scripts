@@ -11,6 +11,40 @@ $ILRepack = "ILRepack"
 [System.Console]::WriteLine("Downloads directory: $DownloadsDirectory")
 [System.Console]::WriteLine("$ILRepack Download URL: $IlrDownloadUrl")
 
+# Get the versions of all of our DLLs
+$SotM_ModBaseDll = "$ArtifactStagingDirectory\SotM_ModBase.dll"
+$SotM_ModBaseVer = (Get-Item $SotM_ModBaseDll).VersionInfo.FileVersionRaw
+[System.Console]::WriteLine("$SotM_ModBaseDll version: $SotM_ModBaseVer")
+
+$EngineCommonDll = "$ArtifactStagingDirectory\EngineCommon.dll"
+$EngineCommonVer = (Get-Item $EngineCommonDll).VersionInfo.FileVersionRaw
+[System.Console]::WriteLine("$EngineCommonDll version: $EngineCommonVer")
+
+$SentinelsEngineDll = "$ArtifactStagingDirectory\SentinelsEngine.dll"
+$SentinelsEngineVer = (Get-Item $SentinelsEngineDll).VersionInfo.FileVersionRaw
+[System.Console]::WriteLine("$SentinelsEngineDll version: $SentinelsEngineVer")
+
+$NunitFrameworkDll = "$ArtifactStagingDirectory\nunit.framework.dll"
+$NunitFrameworkVer = (Get-Item $NunitFrameworkDll).VersionInfo.FileVersionRaw
+[System.Console]::WriteLine("$NunitFrameworkDll version: $NunitFrameworkVer")
+
+# Create json to store all the versions of our dependencies, for us to check next time
+$json = @"
+{
+	"SotM_ModBaseVer": $SotM_ModBaseVer,
+	"EngineCommonVer": $EngineCommonVer,
+	"SentinelsEngineVer": $SentinelsEngineVer,
+	"NunitFrameworkVer": $NunitFrameworkVer
+}
+"@
+
+# Write string to file
+$json | ConvertTo-Json -depth 100 | Out-File "$ArtifactStagingDirectory\versions.json"
+[System.Console]::WriteLine("versions.json file written")
+
+
+
+
 # Download ILRepack through a web client
 $ilrDirectory = "$DownloadsDirectory\$ILRepack"
 $ilrNupkg = "$ilrDirectory.zip" # Using .zip instead of .nupkg because Expand-Archive doesn't work with .nupkg
@@ -39,10 +73,6 @@ if(!(Test-Path $ilrExe -PathType Leaf))
 
 # Run ILRepack to merge all the output .dll and .pdb files
 [System.Console]::WriteLine("Running ILRepack...")
-$SotM_ModBaseDll = "$ArtifactStagingDirectory\SotM_ModBase.dll"
-$EngineCommonDll = "$ArtifactStagingDirectory\EngineCommon.dll"
-$SentinelsEngineDll = "$ArtifactStagingDirectory\SentinelsEngine.dll"
-$NunitFrameworkDll = "$ArtifactStagingDirectory\nunit.framework.dll"
 $mergedDll = "$ArtifactStagingDirectory\merged\SotM_ModBase.dll"
 & $ilrExe -wildcards -out:$mergedDll $SotM_ModBaseDll $EngineCommonDll $SentinelsEngineDll $NunitFrameworkDll
 	
@@ -52,32 +82,3 @@ if(!(Test-Path $mergedDll -PathType Leaf))
 	throw [System.IO.FileNotFoundException] "$mergedDll"
 }
 [System.Console]::WriteLine("Successfully ran ILRepack")
-
-# Get the versions of all of our DLLs
-$SotM_ModBaseVer = (Get-Item $SotM_ModBaseDll).VersionInfo.FileVersionRaw
-[System.Console]::WriteLine("SotM_ModBaseDll version: $SotM_ModBaseVer")
-
-$EngineCommonVer = (Get-Item $EngineCommonDll).VersionInfo.FileVersionRaw
-[System.Console]::WriteLine("EngineCommonDll version: $EngineCommonVer")
-
-$SentinelsEngineVer = (Get-Item $SentinelsEngineDll).VersionInfo.FileVersionRaw
-[System.Console]::WriteLine("SentinelsEngineDll version: $SentinelsEngineVer")
-
-$NunitFrameworkVer = (Get-Item $NunitFrameworkDll).VersionInfo.FileVersionRaw
-[System.Console]::WriteLine("NunitFrameworkDll version: $NunitFrameworkVer")
-
-# Create json to store all the versions of our dependencies, for us to check next time
-$json = @"
-{
-	"SotM_ModBaseVer": $SotM_ModBaseVer,
-	"EngineCommonVer": $EngineCommonVer,
-	"SentinelsEngineVer": $SentinelsEngineVer,
-	"NunitFrameworkVer": $NunitFrameworkVer
-}
-"@
-
-# Write string to file
-$json | ConvertTo-Json -depth 100 | Out-File "$ArtifactStagingDirectory\versions.json"
-[System.Console]::WriteLine("versions.json file written")
-
-### TESTING REGION
