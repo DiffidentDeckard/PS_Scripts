@@ -12,6 +12,7 @@ $SteamCmd = "SteamCMD"
 $EngineCommon = "EngineCommon"
 $SentinelsEngine = "SentinelsEngine"
 $SotMSteamAppID = 337150
+$AzureFeed = "https://pkgs.dev.azure.com/diffidentdeckard/_packaging/SotM_Engines/nuget/v3/index.json"
 
 [System.Console]::WriteLine("Artifacts Directory: $ArtifactsDirectory")
 [System.Console]::WriteLine("Downloads directory: $DownloadsDirectory")
@@ -76,12 +77,15 @@ function UpdateEngineNugetPackageIfNewerVersionAvailable($engine)
 	$engineSteamVersion = $engineSteam.VersionInfo.FileVersionRaw
 	[System.Console]::WriteLine("Steam $engineDll version: $engineSteamVersion")
 
-	# Make sure that the SotM engine dll from Nuget is installed
+	# Check if the SotM engine dll from Nuget is installed
 	$engineNuget = Get-ChildItem -Path "$ArtifactsDirectory" -Filter $engineDll -Recurse -ErrorAction SilentlyContinue -Force
 	
 	if($engineNuget -eq $Null)
 	{
-		throw [System.IO.FileNotFoundException] $engineNuget.FullName
+		# Update the NuGet package
+		[System.Console]::WriteLine("No NuGet version found, publishing...")
+		CreateAndPublishNuGetPackage($engine)
+		return $true
 	}
 	
 	# Get the version of the engine dll from NuGet
@@ -135,7 +139,7 @@ function CreateAndPublishNuGetPackage($engine)
     nuget pack $engineNuspec
 
     # Publish the NuGet package
-    nuget push "$stagingDirectory\$engine.*.nupkg" -src https://pkgs.dev.azure.com/diffidentdeckard/SotMBaseMod/_packaging/SotMBaseMod/nuget/v3/index.json -ApiKey SotMBaseMod -skipduplicate
+    nuget push "$stagingDirectory\$engine.*.nupkg" -src $AzureFeed -ApiKey SotMBaseMod -skipduplicate
 }
 
 ### Writes a NuSpec file used to create a NuGet package for the engine.
