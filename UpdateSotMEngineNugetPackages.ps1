@@ -12,7 +12,7 @@ $SteamCmd = "SteamCMD"
 $EngineCommon = "EngineCommon"
 $SentinelsEngine = "SentinelsEngine"
 $SotMSteamAppID = 337150
-$AzureFeed = "https://pkgs.dev.azure.com/diffidentdeckard/_packaging/SotM_Engines/nuget/v3/index.json"
+$AzureFeed = "https://pkgs.dev.azure.com/diffidentdeckard/_packaging/TESTFEED/nuget/v3/index.json"
 
 [System.Console]::WriteLine("Artifacts Directory: $ArtifactsDirectory")
 [System.Console]::WriteLine("Downloads directory: $DownloadsDirectory")
@@ -126,8 +126,8 @@ function CreateAndPublishNuGetPackage($engine)
     Copy-Item $engineSteamDll -Destination $stagingDirectory
 	[System.Console]::WriteLine("Copied $engineDll to staging directory")
 	
-	# Copy the icon image we will use from the previous NuGet package
-	$engineNugetIcon = (Get-ChildItem -Path $ArtifactsDirectory -Filter $enginePng -Recurse -ErrorAction SilentlyContinue -Force).FullName
+	# Copy the icon image we will use for this Nuget package
+	$engineNugetIcon = (Get-ChildItem -Path "Images\" -Filter $enginePng -Recurse -ErrorAction SilentlyContinue -Force).FullName
     Copy-Item $engineNugetIcon -Destination $stagingDirectory
 	[System.Console]::WriteLine("Copied $enginePng to staging directory")
 
